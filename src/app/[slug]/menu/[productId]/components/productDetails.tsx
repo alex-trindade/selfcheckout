@@ -5,14 +5,26 @@ import { formatCurrency } from "@/helpers/formatCurrency";
 import { Prisma, Product, Restaurant } from "@prisma/client";
 import { ChefHatIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { CartContext } from "../../context/cart";
+import CartSheet from "./cartSheet";
+
 
 interface ProductDetailsProps {
   product: Prisma.ProductGetPayload<{ include: { restaurant: true } }>;
 }
 
 const ProductDetails = ({ product }: ProductDetailsProps) => {
+  
   const [quantity, setQuantity] = useState<number>(1);
+  const {toggleCart, addProduct} = useContext(CartContext)
+  const handleAddToCart = () => {  
+    addProduct({
+      ...product,
+      quantity
+    }); 
+    toggleCart();
+  };
   const handleDecreaseQuantity = () => {
     if (quantity > 1) {
       setQuantity((prev) => {
@@ -23,6 +35,7 @@ const ProductDetails = ({ product }: ProductDetailsProps) => {
       });
     }
   };
+
   const handleIncreaseQuantity = () => {
     if (quantity < 99) {
       setQuantity((prev) => prev + 1);
@@ -80,16 +93,19 @@ const ProductDetails = ({ product }: ProductDetailsProps) => {
             <div className="flex items-center gap-1 5">
               <ChefHatIcon size={18}></ChefHatIcon>
               <h4 className="font-semibold">Ingredientes</h4>
-            </div>           
+            </div>
             <ul className="list-disc px-5 text-sm text-muted-foreground">
-                {product.ingredients.map((ingredient) =>(
-                    <li key={ingredient}>{ingredient}</li>
-                ))}
+              {product.ingredients.map((ingredient) => (
+                <li key={ingredient}>{ingredient}</li>
+              ))}
             </ul>
           </div>
         </ScrollArea>
       </div>
-      <Button className="mt-6 w-full rounded-full ">Adicionar à sacola</Button>
+      <Button className="mt-6 w-full rounded-full" onClick={handleAddToCart}>
+        Adicionar à sacola
+      </Button>
+      <CartSheet></CartSheet>
     </div>
   );
 };
