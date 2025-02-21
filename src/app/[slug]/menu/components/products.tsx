@@ -24,12 +24,9 @@ const Products = ({ products }: ProductsProps) => {
               <h3 className="text-sm font-medium">{product.name}</h3>
               <p className="line-clamp-2 text-sm text-muted-foreground">
                 {product.description}
-              </p>
-              <p className="pt-3 text-sm font-semibold">
-               <h3 className="text-xl font-semibold">
-               {formatCurrency(product.price)}
-               </h3>
-               
+              </p>                            
+               <p className="pt-3 text-sm font-semibold">
+               {formatCurrency(product.price)}                             
               </p>
             </div>
   
