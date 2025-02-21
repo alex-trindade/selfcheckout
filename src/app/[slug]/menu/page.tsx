@@ -1,6 +1,7 @@
 import { db } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import RestaurantHeader from "./components/header"
+import RestaurantCategories from "./components/categories";
 
 interface RestaurantMenuPageProps{
     params: Promise<{slug: string}>
@@ -17,14 +18,20 @@ const RestaurantMenuPage= async({params, searchParams}:RestaurantMenuPageProps) 
     if(!isConsumptionMethodValid(consuptionMethod)){
         return notFound();
     }
-    const restaurant = await db.restaurant.findUnique({where:{slug:slug}})
+    const restaurant = await db.restaurant.findUnique({where:{slug:slug}, include:{
+        menuCategories: {
+            include: {products: true}
+        }
+    }})
+    
     if(!restaurant){
         return notFound();
     }
-
+    console.log(restaurant?.menuCategories)
     return (
         <div>
             <RestaurantHeader restaurant={restaurant}></RestaurantHeader>
+            <RestaurantCategories restaurant={restaurant}></RestaurantCategories>
         </div>
     );
 }
